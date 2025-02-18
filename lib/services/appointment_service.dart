@@ -41,6 +41,7 @@ import '../models/patient.dart';
       if (response.statusCode == 200) {
         return AppointmentResponse.fromJson(json.decode(response.body));
       } else {
+        print("Error: ${response.statusCode} - ${response.body}");
         throw Exception('Failed to book appointment: ${response.body}');
       }
     }

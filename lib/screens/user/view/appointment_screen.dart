@@ -5,6 +5,7 @@ import '../../../models/appointment.dart';
 import '../../../services/appointment_service.dart';
 
 class AppointmentScreen extends StatefulWidget {
+  final int? appointmentId; // Thêm thuộc tính appointmentId
   final Patient? patient;
   final Doctor? doctor;
   final int doctorId;
@@ -17,7 +18,8 @@ class AppointmentScreen extends StatefulWidget {
     this.doctor,
     required this.doctorId,
     required this.selectedDate,
-    required this.selectedTime
+    required this.selectedTime,
+    this.appointmentId, // Thêm vào để truyền appointmentId
   });
 
   @override
@@ -37,14 +39,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     try {
       final request = AppointmentRequest(
+        id: null,
         patientId: widget.patient!.id,
         doctorId: widget.doctorId,
         date: widget.selectedDate,
         time: widget.selectedTime,
       );
 
-      await _appointmentService.bookAppointment(request);
+      final response = await _appointmentService.bookAppointment(request);
+      // Sau khi tạo thành công, bạn có thể lấy ID từ phản hồi của backend
+      // final createdAppointmentId = response.id;  // Đây là ID được backend sinh ra
 
+
+      // print("Created appointment ID: $createdAppointmentId");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Appointment booked successfully')),
       );
@@ -58,6 +65,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appointmentId = widget.appointmentId; // Lấy appointmentId từ widget
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Appointment Confirmation', style: TextStyle(color: Colors.black)),
@@ -82,13 +91,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             Text("Date & Time", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 5),
             Text("${widget.selectedDate} at ${widget.selectedTime}", style: TextStyle(fontSize: 18)),
-            const Spacer(),
-            Text(widget.doctor?.fullName ?? "Doctor information is not available", style: TextStyle(fontSize: 18)),
             const SizedBox(height: 20),
-            Text("Patient", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            Text(widget.patient?.fullName ?? "Patient information is not available", style: TextStyle(fontSize: 18)),
-
+            // Hiển thị appointmentId nếu có
+            if (appointmentId != null)
+              Text("Appointment ID: $appointmentId", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -116,3 +123,4 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
   }
 }
+

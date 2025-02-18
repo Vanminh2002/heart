@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:heart/screens/user/view/appointment_screen.dart';
 import 'package:heart/screens/user/widgets/date_select.dart';
@@ -259,6 +261,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                                   selectedTime: selectedTime!,
                                   patient: widget.patient,
                                   doctor: widget.doctor,
+                                  appointmentId: Random().nextInt(10000),
                                 ),
                               ),
                             );
