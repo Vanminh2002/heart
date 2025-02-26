@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:heart/screens/user/widgets/shedule_card.dart';
+import 'package:heart/models/appointment.dart';
+
 class SheduleTab1 extends StatelessWidget {
-  const SheduleTab1({super.key});
+  final List<Appointment> appointments;
+
+  const SheduleTab1({super.key, required this.appointments});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(children: [
-        const SizedBox(
-          height: 30,
-        ),
-        SheduleCart(
-          confirmation: "Confirmed",
-          mainText: "Dr. Marcus Horizon",
-          subText: "Chardiologist",
-          date: "26/06/2022",
-          time: "10:30 AM",
-          image: "assets/icons/male-doctor.png",
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        SheduleCart(
-          confirmation: "Confirmed",
-          mainText: "Dr. Marcus Horizon",
-          subText: "Chardiologist",
-          date: "26/06/2022",
-          time: "2:00 PM",
-          image: "assets/icons/female-doctor2.png",
-        )
-      ]),
+      body: appointments.isEmpty
+          ? Center(child: Text("No upcoming appointments"))
+          : ListView.builder(
+              itemCount: appointments.length,
+              itemBuilder: (context, index) {
+                final appointment = appointments[index];
+                print(
+                    "📝 Showing appointment: ${appointment.doctorName}, ${appointment.date}");
+
+                return SheduleCart(
+                  confirmation: appointment.status ?? "Pending",
+                  mainText: appointment.doctorName ?? "Unknown Doctor",
+                  subText: "No Specialty",
+                  date: appointment.date,
+                  time: appointment.time,
+                  image: "assets/icons/male-doctor.png",
+                  appointments: appointment,
+                );
+              },
+            ),
     );
   }
 }

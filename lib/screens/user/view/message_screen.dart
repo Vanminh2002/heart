@@ -110,8 +110,8 @@ class _MessageScreenState extends State<MessageScreen>
                     Expanded(
                       child: TabBarView(controller: _tabController, children: const [
                         MessageTab(),
-                        SheduleTab1(),
-                        SheduleTab2(),
+                        SheduleTab1(appointments: [],),
+                        SheduleTab2(appointments: [],),
                       ]),
                     )
                   ],

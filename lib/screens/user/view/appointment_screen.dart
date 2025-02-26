@@ -27,7 +27,15 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  int? _appointmentId; // 👈 Thêm biến này
   final AppointmentService _appointmentService = AppointmentService();
+
+
+  @override
+  void initState() {
+    super.initState();
+    _appointmentId = widget.appointmentId; // Gán giá trị ban đầu từ widget
+  }
 
   Future<void> bookAppointment() async {
     if (widget.patient == null) {
@@ -39,7 +47,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     try {
       final request = AppointmentRequest(
-        id: null,
+        id: _appointmentId, // Giữ nguyên ID nếu đã có
         patientId: widget.patient!.id,
         doctorId: widget.doctorId,
         date: widget.selectedDate,
@@ -47,15 +55,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       );
 
       final response = await _appointmentService.bookAppointment(request);
-      // Sau khi tạo thành công, bạn có thể lấy ID từ phản hồi của backend
-      // final createdAppointmentId = response.id;  // Đây là ID được backend sinh ra
 
+      setState(() {
+        _appointmentId = response.id; // Cập nhật ID sau khi đặt lịch thành công
+      });
 
-      // print("Created appointment ID: $createdAppointmentId");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Appointment booked successfully')),
+          // ID: ${response.id}
+        SnackBar(content: Text('Appointment booked successfully! ')),
       );
-      Navigator.pop(context);
+
+      Navigator.pop(context, response.id); // Trả ID về màn hình trước nếu cần
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error booking appointment: $e')),
@@ -95,6 +105,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             // Hiển thị appointmentId nếu có
             if (appointmentId != null)
               Text("Appointment ID: $appointmentId", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            if (_appointmentId != null)
+              Text("Appointment ID: $_appointmentId",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
             const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:heart/models/appointment.dart';
+
+import '../view/reschedule_screen.dart';
 
 class SheduleCart extends StatelessWidget {
   final String mainText;
@@ -7,8 +10,9 @@ class SheduleCart extends StatelessWidget {
   final String date;
   final String time;
   final String confirmation;
+  final Appointment appointments;
 
-  const SheduleCart({super.key, required this.mainText, required this.subText, required this.image, required this.date, required this.time, required this.confirmation});
+  const SheduleCart({super.key, required this.mainText, required this.subText, required this.image, required this.date, required this.time, required this.confirmation, required this.appointments});
 
   @override
   Widget build(BuildContext context) {
@@ -154,13 +158,17 @@ class SheduleCart extends StatelessWidget {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Reschedule",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: Color.fromARGB(255, 252, 252, 252)),
-                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RescheduleScreen(appointment: appointments),
+                              ),
+                            );
+                          },
+                          child: const Text("Reschedule"),
+                        )
                       ]),
                 ),
               ],
