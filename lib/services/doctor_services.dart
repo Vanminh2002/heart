@@ -33,15 +33,51 @@ class DoctorServices {
   Future<Doctor> fetchDoctorById(int id) async {
     try {
       final response = await http.get(Uri.parse("$baseUrl/$id"));
+      print("API Response: ${response.body}"); // 🔥 Debug response từ API
       if (response.statusCode == 200) {
-        return Doctor.fromJson(jsonDecode(response.body));
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+        // Lấy dữ liệu đúng từ `data`
+        if (jsonResponse.containsKey('data')) {
+          return Doctor.fromJson(jsonResponse['data']);
+        } else {
+          throw Exception("API response does not contain 'data' field");
+        }
       } else {
-        throw Exception("Failed to load doctor. Status code: ${response.statusCode}");
+        throw Exception("Failed to load doctor");
       }
     } catch (e) {
       throw Exception("Error fetching doctor by ID: $e");
     }
   }
 
+  Future<List<Doctor>> searchDoctors(String name) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/name/$name'));
+      final jsonData = jsonDecode(response.body);
 
+      print("API Response: $jsonData"); // Kiểm tra dữ liệu trả về
+
+      if (jsonData is List) {
+        List<Doctor> results = jsonData.map((doc) => Doctor.fromJson(doc)).toList();
+        return results;
+      } else if (jsonData is Map<String, dynamic>) {
+        if (jsonData.containsKey("data")) {
+          // Giả sử API trả về { "data": [...] }
+          List<Doctor> results = (jsonData["data"] as List)
+              .map((doc) => Doctor.fromJson(doc))
+              .toList();
+          return results;
+        } else {
+          throw Exception("Invalid API response format");
+        }
+      } else {
+        throw Exception("Unexpected response type");
+      }
+    } catch (e) {
+      print("Error fetching doctors: $e");
+      throw Exception("Failed to load doctors");
+    }
+
+  }
 }

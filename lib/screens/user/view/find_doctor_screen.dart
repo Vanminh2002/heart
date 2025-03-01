@@ -9,7 +9,7 @@ import 'package:page_transition/page_transition.dart';
 import '../../../models/patient.dart';
 
 class FindDoctor extends StatefulWidget {
-
+  
   const FindDoctor({super.key});
 
   @override

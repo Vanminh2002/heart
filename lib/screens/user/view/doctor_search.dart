@@ -9,15 +9,15 @@ import '../../../models/patient.dart';
 import '../../../services/doctor_services.dart';
 
 class DoctorSearch extends StatefulWidget {
-
-  const DoctorSearch({super.key});
+  final Patient patient;
+  const DoctorSearch({super.key, required this.patient});
 
   @override
   _DoctorSearchState createState() => _DoctorSearchState();
 }
 
 class _DoctorSearchState extends State<DoctorSearch> {
-  late final Patient patient;
+
   final DoctorServices doctorServices = DoctorServices();
 
   @override
@@ -93,7 +93,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                       context,
                       PageTransition(
                         type: PageTransitionType.rightToLeft,
-                        child: DoctorDetailScreen(id: doctor.id, patient: patient,),
+                        child: DoctorDetailScreen(id: doctor.id, patient: widget.patient,),
                       ),
                     );
                   },

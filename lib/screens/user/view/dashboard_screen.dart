@@ -160,12 +160,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListIcons(
                 Icon: "assets/icons/Doctor.png",
                 text: "Doctor",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const DoctorSearch()),
-                  );
+                onTap: () async {
+                  Patient? patient = await _loadPatientData();
+                  if (patient != null) {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: DoctorSearch(patient: patient),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Không tìm thấy thông tin bệnh nhân!")),
+                    );
+                  }
                 },
+
               ),
               ListIcons(
                 Icon: "assets/icons/Pharmacy.png",
@@ -226,13 +237,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
+                  onTap: () async {
+                    Patient? patient = await _loadPatientData();
+                    if (patient != null) {
+                      Navigator.push(
                         context,
                         PageTransition(
-                            type: PageTransitionType.rightToLeft,
-                            child: DoctorSearch()));
+                          type: PageTransitionType.rightToLeft,
+                          child: DoctorSearch(patient: patient),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Không tìm thấy thông tin bệnh nhân!")),
+                      );
+                    }
                   },
+
                   child: Text(
                     "See all",
                     style: TextStyle(

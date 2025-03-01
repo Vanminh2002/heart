@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:heart/screens/user/auth/login_screen.dart';
 
 import 'package:heart/screens/user/onboarding/onboarding_screen.dart';
+import 'package:heart/screens/user/view/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
