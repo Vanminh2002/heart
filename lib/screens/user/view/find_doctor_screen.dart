@@ -8,7 +8,9 @@ import '../../../models/patient.dart';
 import '../../../services/doctor_services.dart';
 
 class FindDoctor extends StatefulWidget {
-  const FindDoctor({super.key});
+  final Patient patient; // Nhận patient từ constructor
+
+  const FindDoctor({super.key, required this.patient});
 
   @override
   State<FindDoctor> createState() => _FindDoctorState();
@@ -20,6 +22,12 @@ class _FindDoctorState extends State<FindDoctor> {
   List<Doctor> _doctors = [];
   final DoctorServices _doctorService = DoctorServices();
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    patient = widget.patient; // Gán patient từ widget
+  }
 
   Future<void> _handleSearch(String name) async {
     if (name.isEmpty) {
@@ -62,9 +70,11 @@ class _FindDoctorState extends State<FindDoctor> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             SizedBox(height: 10),
-            Text("No doctors found", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey)),
+            Text(
+              "No doctors found",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+            ),
           ],
         ),
       );
@@ -74,30 +84,23 @@ class _FindDoctorState extends State<FindDoctor> {
       itemCount: _doctors.length,
       itemBuilder: (context, index) {
         final doctor = _doctors[index];
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeft,
-                child: DoctorDetailScreen(id: doctor.id, patient: patient),
-              ),
-            );
-          },
-          child: Card(
-            elevation: 3,
-            margin: EdgeInsets.symmetric(vertical: 8),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: ListTile(
-              contentPadding: EdgeInsets.all(10),
-              leading: CircleAvatar(
-                radius: 30,
-                backgroundImage: AssetImage("assets/icons/male-doctor.png"),
-              ),
-              title: Text(doctor.fullName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              subtitle: Text(doctor.specialty, style: TextStyle(color: Colors.grey[600])),
-              trailing: Icon(Icons.arrow_forward_ios, color: Colors.blue),
+        return Card(
+          elevation: 3,
+          margin: EdgeInsets.symmetric(vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(10),
+            leading: CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage("assets/icons/male-doctor.png"),
             ),
+            title: Text(doctor.fullName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            subtitle: Text(doctor.specialty, style: TextStyle(color: Colors.grey[600])),
+            trailing: IconButton(
+              icon: Icon(Icons.arrow_forward_ios, color: Colors.blue),
+              onPressed: () => _navigateToDoctorDetail(doctor),
+            ),
+            onTap: () => _navigateToDoctorDetail(doctor),
           ),
         );
       },
@@ -144,6 +147,16 @@ class _FindDoctorState extends State<FindDoctor> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _navigateToDoctorDetail(Doctor doctor) {
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeft,
+        child: DoctorDetailScreen(id: doctor.id, patient: patient),
       ),
     );
   }

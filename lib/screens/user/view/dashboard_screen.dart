@@ -109,12 +109,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
               width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(),
               child: TextField(
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  Patient? patient = await _loadPatientData();
+                  if (patient != null) {
+                    Navigator.push(
                       context,
                       PageTransition(
-                          type: PageTransitionType.rightToLeft,
-                          child: FindDoctor()));
+                        type: PageTransitionType.rightToLeft,
+                        child: FindDoctor(patient: patient),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Không tìm thấy thông tin bệnh nhân!")),
+                    );
+                  }
                 },
                 textAlign: TextAlign.start,
                 textInputAction: TextInputAction.none,
