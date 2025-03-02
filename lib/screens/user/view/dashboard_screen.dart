@@ -189,12 +189,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               ListIcons(
                 Icon: "assets/icons/Pharmacy.png",
-                text: "Pharmacy",
+                text: "Medicine",
                 onTap: () {
                   // Chuyển sang trang Pharmacy
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const PharmacyScreen()),
+                    MaterialPageRoute(builder: (context) => MedicineScreen()),
                   );
                 },
               ),
