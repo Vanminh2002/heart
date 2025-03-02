@@ -7,6 +7,21 @@ import '../../../models/patient.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+
+  int calculateAge(DateTime birthDate) {
+    DateTime today = DateTime.now();
+    int age = today.year - birthDate.year;
+
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+
+    return age;
+  }
+
+
+
   // Hàm fetch dữ liệu bệnh nhân từ Local Storage
   Future<Patient?> fetchPatient() async {
     try {
@@ -89,7 +104,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        "Tuổi: ${patient?.birthday ?? 'Chưa có'}",
+                        "Ngày Sinh: ${patient?.birthday ?? 'Chưa có'}",
                         style: const TextStyle(fontSize: 14, color: Colors.white),
                       ),
                       const SizedBox(height: 30),
@@ -143,4 +158,6 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+
 }

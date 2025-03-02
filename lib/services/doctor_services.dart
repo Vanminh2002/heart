@@ -51,7 +51,7 @@ class DoctorServices {
     }
   }
 
-  Future<List<Doctor>> searchDoctors(String name) async {
+   Future<List<Doctor>> searchDoctors(String name) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/name/$name'));
       final jsonData = jsonDecode(response.body);
