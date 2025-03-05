@@ -7,6 +7,7 @@ import 'package:heart/screens/user/widgets/list_doctor.dart';
 import 'package:heart/screens/user/widgets/time_select.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../../models/common.dart';
 import '../../../models/doctor.dart';
 import '../../../models/patient.dart';
 import '../../../services/doctor_services.dart';
@@ -92,7 +93,9 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                         width: 120,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(doctor.imageUrl), // Hình ảnh bác sĩ
+                            image: widget.doctor != null && widget.doctor!.imageUrl.isNotEmpty
+                                ? NetworkImage(getFullImageUrl(widget.doctor!.imageUrl)) as ImageProvider
+                                : const AssetImage("assets/icons/unknow.png"),
                             fit: BoxFit.cover,
                           ),
                           shape: BoxShape.circle,
@@ -297,6 +300,14 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     );
   }
 }
+
+
+String getFullImageUrl(String imageUrl) {
+  final String baseUrl = '${Common.domain}/upload/doctor';
+  return "$baseUrl/$imageUrl";
+}
+
+
 
 void showSnackbarMessage(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(

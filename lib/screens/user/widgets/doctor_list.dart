@@ -24,6 +24,8 @@ class DoctorList extends StatefulWidget {
 class _DoctorListState extends State<DoctorList> {
   late Future<Patient?> _patientFuture;
 
+
+
   @override
   void initState() {
     super.initState();
@@ -132,13 +134,9 @@ class _DoctorListState extends State<DoctorList> {
   }
 
   String getFullImageUrl(String imageUrl) {
-    if (imageUrl.startsWith("http")) {
-      return imageUrl; // Nếu đã là URL đầy đủ, trả về luôn
-    }
-    final String baseUrl = '${Common.domain}/doctor/assets/doctor/'; // Thay bằng API của bạn
-    return "$baseUrl$imageUrl"; // Ghép URL đầy đủ
+    final String baseUrl = '${Common.domain}/upload/doctor';
+    return "$baseUrl/$imageUrl";
   }
-
 
   Future<Patient?> getPatientFromStorage() async {
     final prefs = await SharedPreferences.getInstance();

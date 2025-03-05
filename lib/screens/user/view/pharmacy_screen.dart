@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:heart/screens/user/view/doctor_detail_screen.dart';
+import '../../../models/common.dart';
 import '../../../models/medicine.dart';
 import '../../../services/medicine_service.dart';
 
@@ -81,7 +83,7 @@ class _MedicineScreenState extends State<MedicineScreen> {
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
-                            medicine.imageUrl,
+                            getFullImageUrl(medicine.imageUrl),
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
@@ -123,12 +125,12 @@ class _MedicineScreenState extends State<MedicineScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.network(
-                medicine.imageUrl,
+                getFullImageUrl(medicine.imageUrl), // Đảm bảo URL đầy đủ
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.image_not_supported, size: 100),
+                const Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
               ),
               SizedBox(height: 10),
               Text("Liều dùng: ${medicine.dosage}"),
@@ -147,5 +149,13 @@ class _MedicineScreenState extends State<MedicineScreen> {
         );
       },
     );
+  }
+
+  String getFullImageUrl(String imageUrl) {
+    if (imageUrl.startsWith("http")) {
+      return imageUrl;
+    }
+    final String baseUrl = '${Common.domain}/upload/medication';
+    return "$baseUrl/$imageUrl";
   }
 }

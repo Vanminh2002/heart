@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:heart/screens/user/widgets/list_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../../../models/common.dart';
 import '../../../models/patient.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-
 
   int calculateAge(DateTime birthDate) {
     DateTime today = DateTime.now();
@@ -20,9 +20,6 @@ class ProfileScreen extends StatelessWidget {
     return age;
   }
 
-
-
-  // Hàm fetch dữ liệu bệnh nhân từ Local Storage
   Future<Patient?> fetchPatient() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -49,69 +46,52 @@ class ProfileScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 50),
             Center(
-              child: Stack(
-                children: [
-                  const SizedBox(height: 50),
-                  Container(
-                    width: 110,
-                    height: 110,
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 4, color: Colors.white),
-                      boxShadow: [
-                        BoxShadow(
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          color: Colors.black.withOpacity(0.1),
-                        )
-                      ],
-                      shape: BoxShape.circle,
-                      image: const DecorationImage(
-                        image: AssetImage("assets/icons/avatar.png"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // FutureBuilder để hiển thị thông tin bệnh nhân
-            FutureBuilder<Patient?>(
-              future: fetchPatient(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError || !snapshot.hasData) {
-                  return const Center(child: Text('Không thể tải thông tin bệnh nhân', style: TextStyle(color: Colors.white)));
-                } else {
-                  final patient = snapshot.data;
-
-                  return Column(
-                    children: [
-                      Text(
-                        patient?.fullName ?? "Tên bệnh nhân",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+              child: FutureBuilder<Patient?>(
+                future: fetchPatient(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError || !snapshot.hasData) {
+                    return Column(
+                      children: [
+                        _buildAvatar(null), // Avatar mặc định
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Không thể tải thông tin bệnh nhân",
+                          style: TextStyle(color: Colors.white),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "SĐT: ${patient?.phoneNumber ?? 'Chưa có'}",
-                        style: const TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "Ngày Sinh: ${patient?.birthday ?? 'Chưa có'}",
-                        style: const TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                      const SizedBox(height: 30),
-                    ],
-                  );
-                }
-              },
+                      ],
+                    );
+                  } else {
+                    final patient = snapshot.data;
+                    return Column(
+                      children: [
+                        _buildAvatar(patient?.imageUrl),
+                        const SizedBox(height: 10),
+                        Text(
+                          patient?.fullName ?? "Tên bệnh nhân",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          "SĐT: ${patient?.phoneNumber ?? 'Chưa có'}",
+                          style: const TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          "Ngày Sinh: ${patient?.birthday ?? 'Chưa có'}",
+                          style: const TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                        const SizedBox(height: 30),
+                      ],
+                    );
+                  }
+                },
+              ),
             ),
 
             Container(
@@ -159,5 +139,39 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  /// Widget hiển thị ảnh bệnh nhân với fallback khi ảnh lỗi
+  Widget _buildAvatar(String? imageUrl) {
+    return Center(
+      child: Container(
+        width: 110,
+        height: 110,
+        decoration: BoxDecoration(
+          border: Border.all(width: 4, color: Colors.white),
+          boxShadow: [
+            BoxShadow(
+              spreadRadius: 2,
+              blurRadius: 10,
+              color: Colors.black.withOpacity(0.1),
+            )
+          ],
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: imageUrl != null && imageUrl.isNotEmpty
+                ? NetworkImage(getFullImageUrl(imageUrl))
+                : const AssetImage("assets/icons/avatar.png") as ImageProvider,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
 
+  /// Hàm tạo URL đầy đủ cho ảnh bệnh nhân
+  String getFullImageUrl(String imageUrl) {
+    if (imageUrl.startsWith("http")) {
+      return imageUrl;
+    }
+    final String baseUrl = '${Common.domain}/upload/patient';
+    return "$baseUrl/$imageUrl";
+  }
 }

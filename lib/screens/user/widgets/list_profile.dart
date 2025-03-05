@@ -4,8 +4,9 @@ class ListProfile extends StatelessWidget {
   final String title;
   final String image;
   final Color color;
+  final VoidCallback? onTap;
 
-  const ListProfile({super.key, required this.title, required this.image, required this.color});
+  const ListProfile({super.key, required this.title, required this.image, required this.color, this.onTap});
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,7 @@ import 'package:heart/screens/user/view/home_screen.dart';
 
 import 'package:page_transition/page_transition.dart';
 
+import '../../../models/common.dart';
 import '../../../models/doctor.dart';
 import '../../../models/patient.dart';
 import '../../../services/doctor_services.dart';
@@ -46,7 +47,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
           ),
         ),
         title: const Text(
-          "Top Doctors",
+          "List Doctors",
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
         centerTitle: true,
@@ -99,7 +100,9 @@ class _DoctorSearchState extends State<DoctorSearch> {
                   },
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(doctor.imageUrl),
+                      backgroundImage: doctor.imageUrl.isNotEmpty
+                          ? NetworkImage(getFullImageUrl(doctor.imageUrl))
+                          : const AssetImage("assets/icons/unknow.png") as ImageProvider,
                     ),
                     title: Text(doctor.fullName),
                     subtitle: Text('${doctor.specialty} • ${doctor.phoneNumber}'),
@@ -112,5 +115,10 @@ class _DoctorSearchState extends State<DoctorSearch> {
         ),
       ),
     );
+  }
+
+  String getFullImageUrl(String imageUrl) {
+    final String baseUrl = '${Common.domain}/upload/doctor';
+    return "$baseUrl/$imageUrl";
   }
 }
